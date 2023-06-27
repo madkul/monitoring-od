@@ -1,0 +1,333 @@
+<html>
+  <header>
+    <title>SurferBot - Ohdear</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <style>
+      .nonaktif {background-color: red;}
+      .aktif {background-color: rgb(12, 255, 33);}
+      .ohdear {background-color: rgba(82, 82, 65, 0.581);}
+      .vira {background-color: rgba(244, 163, 223, 0.861);}
+      
+      h1{
+        font-family: sans-serif;
+      }
+       
+      table {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #666;
+        text-shadow: 1px 1px 0px #fff;
+        background: #eaebec;
+        border: #ccc 1px solid;
+      }
+       
+      table th {
+        padding: 15px 35px;
+        border-left:1px solid #e0e0e0;
+        border-bottom: 1px solid #e0e0e0;
+        background: #ededed;
+      }
+       
+      table th:first-child{  
+        border-left:none;  
+      }
+       
+      table tr {
+        text-align: center;
+        padding-left: 20px;
+      }
+       
+      table td:first-child {
+        text-align: bottom;
+        padding-left: 20px;
+        border-left: 0;
+      }
+       
+      table td {
+        padding: 15px 35px;
+        border-top: 1px solid #ffffff;
+        border-bottom: 1px solid #e0e0e0;
+        border-left: 1px solid #e0e0e0;
+
+      }
+       
+      table tr:last-child td {
+        border-bottom: 0;
+      }
+       
+      table tr:last-child td:first-child {
+        -moz-border-radius-bottomleft: 3px;
+        -webkit-border-bottom-left-radius: 3px;
+        border-bottom-left-radius: 3px;
+      }
+       
+      table tr:last-child td:last-child {
+        -moz-border-radius-bottomright: 3px;
+        -webkit-border-bottom-right-radius: 3px;
+        border-bottom-right-radius: 3px;
+      }
+
+    </style>
+  </header>
+  <body>
+    <table class="table" id="myTable">
+      <thead>
+        <tr>
+          <th scope="col">No</th>
+          <th scope="col">GrowID</th>
+          <th scope="col">Status</th>
+          <th scope="col">World</th>
+          <th scope="col">Gems</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <table class="table" id="od">
+      <thead>
+        <tr>
+          <th scope="col">All Gems</th>
+          <th scope="col">All Status</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+        //const ServerUrl = "172.105.20.95";
+
+/*
+const serverPassword = prompt("Enter Your Server Password");
+alert("Your Server URL is " + ServerUrl + "\nYour Server Password is " + serverPassword)
+*/
+
+function isJsonString(str) {
+    try {
+      JSON.parse(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  
+  
+  swal("masukin ip rdp", {
+    content: "input",
+    button: "PELAN PELAN PAK SUPIR",
+  })
+  
+  .then((value) => {
+    ServerUrl = value;
+  
+    if (!ServerUrl) {
+      return swal("Ohdear Store", "Input yang bener anjing", "error", {
+        button: "SANS ANJING",
+      });
+    } 
+  
+    swal("Enter Your Server Password:", {
+      content: "input",
+      button: "SEPEDA NABI ADAM",
+    })
+  
+    .then((value2) => {
+      serverPassword = value2
+      if (!serverPassword) {
+        return swal("Ohdear Store", "Input yang bener anjing", "error", {
+          button: "SANS ANJING",
+        });
+      } 
+      swal("Ohdear Store", "You Logged in as " + ServerUrl, "success", {
+        button: "MAKASIH DONG WIR",
+      });
+    })
+  
+  });
+  
+  
+  async function requestAPI(path, data) {
+  
+      const formData = new FormData();
+      for (const key in data) {
+        formData.append(key, data[key]);
+      }
+  
+      const response = await fetch(`http://${ServerUrl}:4545/${path}`, {
+      method: "POST",
+      headers: {
+        "password": serverPassword,
+      },
+      body: formData
+    });
+  
+    const responseText = await response.text();
+    return isJsonString(responseText) ? JSON.parse(responseText) : responseText;
+  }
+  
+  const BotStatus = [
+    "Disconnected",
+    "Connected",
+    "Banned",
+    "Suspended",
+    "Wrong Password",
+    "Update Required",
+    "Maintenance",
+    "AAP",
+    "Logon ATTEMPTS",
+    "On Send To Server",
+    "Captcha",
+    "Success",
+    "SERVER OVERLOADED",
+    "Bypass Tutorial",
+  ];
+  
+  async function cleanMemory() {
+  await requestAPI("clearCache", {
+  });
+  
+  }
+  async function updateList() {
+    const response1 = await requestAPI("runScript", {
+      script: `
+  
+        for k, v in pairs(getAllBot()) do
+          gems = v:getLocal().gems
+          ping = v:getMs()
+          world = v:getCurrentWorld():upper()
+          status = v:getBotStatus()
+          growid = v:getLocal().name
+          PosX = math.floor(v:getLocal().pos.x / 32)
+          PosY = math.floor(v:getLocal().pos.y / 32)
+          level = v:getLocal().level
+  
+  
+  
+          if v:isEquipped(98) then
+            pick = "[Pick x"..v:getItemCount(98).."]"
+          else
+            pick = "[No Pick]"
+          end
+  
+          if v:getBotStatus() == Success and v:getEnetStatus() == Connected then
+            stat = "aktif"
+          else
+            stat = "nonaktif"
+          end
+          print(growid .. "|" .. status .. "|" .. world .. "|" .. ping .. "|" .. gems .. "|" .. PosX .. "|" .. PosY .. "|" .. stat .. "|" .. level .. "|" .. pick)
+        end
+      `
+    });
+  
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  const response2 = await requestAPI("getOutput", {
+      scriptID: response1.scriptID
+   });
+  
+  const output = response2.split("\n");
+  const parsedData = output.map(item => {
+      const [growID, status, world, ping, gems, PosX, PosY, stat, level, pick] = item.split("|");
+      if (growID === "") {
+        return null;
+      }
+      return { growID, status, world, ping, gems, PosX, PosY, stat, level, pick };
+  }).filter(item => item !== null);
+  
+  const table = document.getElementById("myTable");
+  const tbody = table.querySelector("tbody");
+  tbody.innerHTML = "";
+  
+  parsedData.forEach((data, i) => {
+  
+    const row = document.createElement("tr");
+  
+    
+    row.appendChild(document.createElement("td")).textContent = i+1;
+    row.appendChild(document.createElement("td")).textContent = data.growID + " (Lv " + data.level + ")";
+    row.appendChild(document.createElement("td")).textContent = BotStatus[data.status] + " (" + data.ping + "ms)";
+    row.appendChild(document.createElement("td")).textContent = data.world + " (" + data.PosX + ", " + data.PosY + ")";
+    row.appendChild(document.createElement("td")).textContent = data.gems + " " + data.pick;
+    
+  /*  const cell6 = document.createElement("td");
+    cell6.innerHTML = `<button onclick="tes('${data.growID}')" type="button">Warp</button>`;
+    row.appendChild(cell6);
+  */
+    tbody.appendChild(row);
+  
+  });
+  
+  document.getElementsByTagName("tr")[0].setAttribute("class", "ohdear");
+  parsedData.forEach((data, i) => {
+    document.getElementsByTagName("tr")[i+1].setAttribute("class", data.stat);
+  });
+  
+  }
+  
+  async function updateGems() {
+    const responses1 = await requestAPI("runScript", {
+      script: `
+        allgems = 0
+        online = 0
+        offline = 0
+        for _, v in pairs(getAllBot()) do
+          allgems = (allgems + v:getLocal().gems)
+          if v:getBotStatus() == Success and v:getEnetStatus() == Connected then
+            online = online + 1
+          else
+            offline = offline + 1
+          end
+        end
+  
+        print(allgems .. "|" .. online .. "|" .. offline)
+      `
+    });
+  
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  const responses2 = await requestAPI("getOutput", {
+      scriptID: responses1.scriptID
+   });
+  
+  const outputs = responses2.split("\n");
+  const parsedDatas = outputs.map(items => {
+      const [allgems, online, offline] = items.split("|");
+  
+      return { allgems, online, offline };
+  }).filter(items => items !== null);
+  
+  const tables = document.getElementById("od");
+  const tbodys = tables.querySelector("tbody");
+  tbodys.innerHTML = "";
+  
+  parsedDatas.forEach((datas, i) => {
+    if (i == 0) {
+      const rows = document.createElement("tr");
+      rows.appendChild(document.createElement("td")).textContent = datas.allgems;
+      rows.appendChild(document.createElement("td")).textContent = datas.online + " / " + datas.offline;
+      tbodys.appendChild(rows);
+    }
+  });
+  
+  }
+  
+  function warp(botName) {
+    const worldName = prompt("Please enter the World Name");
+    RequestAPI("runScript", {
+      script: `getBot('${botName}'):warp('${worldName}')`,
+    });
+  }
+  
+  updateGems();
+  updateList();
+  cleanMemory();
+  
+  setInterval(updateGems, 3000);
+  setInterval(updateList, 3000);
+  setInterval(cleanMemory, 5000);
+    </script>
+  </body>
+</html>
